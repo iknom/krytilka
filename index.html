@@ -33,6 +33,9 @@
     <!-- Babel for JSX transformation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <!-- Import maps need this polyfill on older mobile browsers -->
+    <script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.min.js" crossorigin="anonymous"></script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,6 +57,10 @@
             color: white;
             margin: 0;
             overflow-x: hidden;
+        }
+
+        #root {
+            width: 100%;
         }
 
         .wheel-shadow {
@@ -79,7 +86,12 @@
 <body>
 <div id="root"></div>
 
-<script type="text/babel" data-type="module">
+<script
+    type="text/babel"
+    data-type="module"
+    data-presets="env,react"
+    data-plugins="transform-object-rest-spread"
+>
     import React, { useState, useEffect, useCallback } from 'react';
     import ReactDOM from 'react-dom/client';
     import * as d3 from 'd3';
@@ -124,71 +136,104 @@
     };
 
 
+    const PRIZE_WEIGHTS = {
+        money: 60,
+        vacuum: 10,
+        kettle: 7,
+        euro: 7,
+        meat_grinder: 5,
+        usd: 5,
+        pan: 3,
+        knives: 2,
+        steam: 1,
+    };
+
     const PRIZES = [
         {
             id: 'money',
             text: 'Гроші',
             color: PALETTE.SAGE,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Coins className="w-6 h-6" />
+            icon: <Coins className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.money,
         },
         {
             id: 'vacuum',
             text: 'Пилосос',
             color: PALETTE.BEIGE,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Wind className="w-6 h-6" />
+            icon: <Wind className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.vacuum,
         },
         {
             id: 'kettle',
             text: 'Електрочайник',
             color: PALETTE.LILAC,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Zap className="w-6 h-6" />
+            icon: <Zap className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.kettle,
         },
         {
             id: 'euro',
             text: 'Євро',
             color: PALETTE.PURPLE,
             textColor: PALETTE.TEXT_WHITE,
-            icon: <Euro className="w-6 h-6" />
+            icon: <Euro className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.euro,
         },
         {
             id: 'meat_grinder',
             text: "М'ясорубка",
             color: PALETTE.PINK,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Utensils className="w-6 h-6" />
+            icon: <Utensils className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.meat_grinder,
         },
         {
             id: 'usd',
             text: 'Долари',
             color: PALETTE.SAGE,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Banknote className="w-6 h-6" />
+            icon: <Banknote className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.usd,
         },
         {
             id: 'pan',
             text: 'Пательня',
             color: PALETTE.BEIGE,
             textColor: PALETTE.TEXT_DARK,
-            icon: <ChefHat className="w-6 h-6" />
+            icon: <ChefHat className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.pan,
         },
         {
             id: 'knives',
             text: 'Набір ножів',
             color: PALETTE.LILAC,
             textColor: PALETTE.TEXT_DARK,
-            icon: <Scissors className="w-6 h-6" />
+            icon: <Scissors className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.knives,
         },
         {
             id: 'steam',
             text: 'Пароочисник',
             color: PALETTE.PURPLE,
             textColor: PALETTE.TEXT_WHITE,
-            icon: <Cloud className="w-6 h-6" />
+            icon: <Cloud className="w-6 h-6" />,
+            weight: PRIZE_WEIGHTS.steam,
         }
     ];
+
+    const getWeightedRandomIndex = (items) => {
+        const totalWeight = items.reduce((sum, item) => sum + (item.weight ?? 1), 0);
+        let threshold = Math.random() * totalWeight;
+
+        for (let i = 0; i < items.length; i++) {
+            threshold -= items[i].weight ?? 1;
+            if (threshold <= 0) return i;
+        }
+
+        return items.length - 1;
+    };
 
     // --- COMPONENTS ---
 
@@ -371,7 +416,7 @@
 
         const handleSpinClick = useCallback(() => {
             if (!mustSpin && !showModal) {
-                const newWinningIndex = Math.floor(Math.random() * PRIZES.length);
+                const newWinningIndex = getWeightedRandomIndex(PRIZES);
                 setWinningIndex(newWinningIndex);
                 setMustSpin(true);
             }
@@ -391,7 +436,7 @@
         };
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden"
+            <div className="flex flex-col items-center justify-center p-4 relative overflow-visible w-full"
                  style={{ backgroundColor: THEME_COLORS.background }}>
 
                 <div className="z-10 flex flex-col items-center w-full max-w-lg">
