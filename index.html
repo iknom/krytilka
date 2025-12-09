@@ -86,7 +86,12 @@
 <body>
 <div id="root"></div>
 
-<script type="text/babel" data-type="module">
+<script
+    type="text/babel"
+    data-type="module"
+    data-presets="env,react"
+    data-plugins="transform-object-rest-spread"
+>
     import React, { useState, useEffect, useCallback } from 'react';
     import ReactDOM from 'react-dom/client';
     import * as d3 from 'd3';
@@ -131,6 +136,18 @@
     };
 
 
+    const PRIZE_WEIGHTS = {
+        money: 60,
+        vacuum: 10,
+        kettle: 7,
+        euro: 7,
+        meat_grinder: 5,
+        usd: 5,
+        pan: 3,
+        knives: 2,
+        steam: 1,
+    };
+
     const PRIZES = [
         {
             id: 'money',
@@ -138,7 +155,7 @@
             color: PALETTE.SAGE,
             textColor: PALETTE.TEXT_DARK,
             icon: <Coins className="w-6 h-6" />,
-            weight: 4,
+            weight: PRIZE_WEIGHTS.money,
         },
         {
             id: 'vacuum',
@@ -146,7 +163,7 @@
             color: PALETTE.BEIGE,
             textColor: PALETTE.TEXT_DARK,
             icon: <Wind className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.vacuum,
         },
         {
             id: 'kettle',
@@ -154,7 +171,7 @@
             color: PALETTE.LILAC,
             textColor: PALETTE.TEXT_DARK,
             icon: <Zap className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.kettle,
         },
         {
             id: 'euro',
@@ -162,7 +179,7 @@
             color: PALETTE.PURPLE,
             textColor: PALETTE.TEXT_WHITE,
             icon: <Euro className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.euro,
         },
         {
             id: 'meat_grinder',
@@ -170,7 +187,7 @@
             color: PALETTE.PINK,
             textColor: PALETTE.TEXT_DARK,
             icon: <Utensils className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.meat_grinder,
         },
         {
             id: 'usd',
@@ -178,7 +195,7 @@
             color: PALETTE.SAGE,
             textColor: PALETTE.TEXT_DARK,
             icon: <Banknote className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.usd,
         },
         {
             id: 'pan',
@@ -186,7 +203,7 @@
             color: PALETTE.BEIGE,
             textColor: PALETTE.TEXT_DARK,
             icon: <ChefHat className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.pan,
         },
         {
             id: 'knives',
@@ -194,7 +211,7 @@
             color: PALETTE.LILAC,
             textColor: PALETTE.TEXT_DARK,
             icon: <Scissors className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.knives,
         },
         {
             id: 'steam',
@@ -202,7 +219,7 @@
             color: PALETTE.PURPLE,
             textColor: PALETTE.TEXT_WHITE,
             icon: <Cloud className="w-6 h-6" />,
-            weight: 1,
+            weight: PRIZE_WEIGHTS.steam,
         }
     ];
 
